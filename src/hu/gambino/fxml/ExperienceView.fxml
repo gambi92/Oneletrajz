@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="629.0" prefWidth="1006.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hu.gambino.ctrl.ExperienceController">
+   <children>
+      <Label layoutX="435.0" layoutY="14.0" text="Tanulmányok">
+         <font>
+            <Font size="23.0" />
+         </font>
+      </Label>
+      <TableView fx:id="tableEducation" layoutX="14.0" layoutY="48.0" onMouseClicked="#rowClickedEducation" prefHeight="162.0" prefWidth="978.0">
+        <columns>
+          <TableColumn fx:id="colIdEducation" prefWidth="69.0" text="ID" />
+          <TableColumn fx:id="colNameEducation" prefWidth="502.0" text="Név" />
+            <TableColumn fx:id="colBeginningEducation" prefWidth="164.0" text="Tanulmány kezdete" />
+            <TableColumn fx:id="colEndingEducation" prefWidth="168.0" text="Tanulmány vége" />
+            <TableColumn fx:id="colAchievementEducation" prefWidth="72.0" text="Eredménye" />
+        </columns>
+      </TableView>
+      <TextField fx:id="txtIdEducation" layoutX="14.0" layoutY="210.0" prefHeight="25.0" prefWidth="69.0" />
+      <TextField fx:id="txtNameEducation" layoutX="83.0" layoutY="210.0" prefHeight="25.0" prefWidth="502.0" />
+      <DatePicker fx:id="dtpBeginningEducation" layoutX="585.0" layoutY="210.0" prefHeight="25.0" prefWidth="164.0" />
+      <DatePicker fx:id="dtpEndingEducation" layoutX="749.0" layoutY="210.0" prefHeight="25.0" prefWidth="168.0" />
+      <TextField fx:id="txtAchievementEducation" layoutX="917.0" layoutY="210.0" prefHeight="25.0" prefWidth="75.0" />
+      <Button fx:id="btnSaveEducation" layoutX="364.0" layoutY="242.0" mnemonicParsing="false" onAction="#doSaveEducation" text="Mentés" />
+      <Button fx:id="btnDeleteEducation" layoutX="585.0" layoutY="242.0" mnemonicParsing="false" onAction="#doDeleteEducation" text="Törlés" />
+      <Button fx:id="btnNewEducation" layoutX="429.0" layoutY="274.0" mnemonicParsing="false" onAction="#doNewEducation" prefHeight="25.0" prefWidth="148.0" text="Új" />
+      <Label layoutX="462.0" layoutY="325.0" text="Munkák">
+         <font>
+            <Font size="23.0" />
+         </font>
+      </Label>
+      <TableView fx:id="tableJob" layoutX="14.0" layoutY="359.0" onMouseClicked="#rowClickedJob" prefHeight="162.0" prefWidth="978.0">
+         <columns>
+            <TableColumn fx:id="colIdJob" prefWidth="49.0" text="ID" />
+            <TableColumn fx:id="colNameJob" prefWidth="248.0" text="Név" />
+            <TableColumn fx:id="colBeginningJob" prefWidth="99.0" text="Munka kezdete" />
+            <TableColumn fx:id="colEndingJob" prefWidth="100.0" text="Munka vége" />
+            <TableColumn fx:id="colPositionJob" prefWidth="194.0" text="Beosztás" />
+            <TableColumn fx:id="colResponsibilitiesJob" prefWidth="286.0" text="Feladatok" />
+         </columns>
+      </TableView>
+      <TextField fx:id="txtIdJob" layoutX="14.0" layoutY="521.0" prefHeight="25.0" prefWidth="49.0" />
+      <TextField fx:id="txtNameJob" layoutX="63.0" layoutY="521.0" prefHeight="25.0" prefWidth="248.0" />
+      <DatePicker fx:id="dtpBeginningJob" layoutX="311.0" layoutY="521.0" prefHeight="25.0" prefWidth="99.0" />
+      <DatePicker fx:id="dtpEndingJob" layoutX="410.0" layoutY="521.0" prefHeight="25.0" prefWidth="100.0" />
+      <TextField fx:id="txtPositionJob" layoutX="511.0" layoutY="521.0" prefHeight="25.0" prefWidth="194.0" />
+      <TextField fx:id="txtResponsibilitiesJob" layoutX="705.0" layoutY="521.0" prefHeight="25.0" prefWidth="286.0" />
+      <Button fx:id="btnSaveJob" layoutX="364.0" layoutY="553.0" mnemonicParsing="false" onAction="#doSaveJob" text="Mentés" />
+      <Button fx:id="btnDeleteJob" layoutX="584.0" layoutY="553.0" mnemonicParsing="false" onAction="#doDeleteJob" text="Törlés" />
+      <Button fx:id="btnNewJob" layoutX="429.0" layoutY="590.0" mnemonicParsing="false" onAction="#doNewJob" prefHeight="25.0" prefWidth="148.0" text="Új" />
+   </children>
+</AnchorPane>
