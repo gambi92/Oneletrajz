@@ -24,7 +24,7 @@ public class DatabaseDAO implements DataProvider {
 		// Felhasználói adatok lementése
 		Properties props = new Properties();
 		props.setProperty("user", "postgres");
-		props.setProperty("password", "d175862e");
+		props.setProperty("password", "006554");
 
 		// Kapcsolat létrehozása
 		conn = DriverManager.getConnection(connectionString, props);
