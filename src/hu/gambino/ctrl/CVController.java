@@ -1,15 +1,26 @@
 package hu.gambino.ctrl;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.net.URL;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Optional;
 import java.util.ResourceBundle;
+
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Font.FontFamily;
+import com.itextpdf.text.pdf.PdfWriter;
 
 import hu.gambino.Start;
 import hu.gambino.data.CV;
 import hu.gambino.data.DataProvider;
+import hu.gambino.data.Education;
+import hu.gambino.data.Job;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -20,7 +31,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -95,6 +108,8 @@ public class CVController implements Initializable {
 	private Button btnNew;
 	@FXML
 	private Button btnBelongings;
+	@FXML
+	private Button btnSaveToPDF;
 
 	@FXML
 	private TextField txtId;
@@ -167,22 +182,25 @@ public class CVController implements Initializable {
 				e.printStackTrace();
 			}
 
-			// A GUI-ban megadott ID megkeresése, majd annak adatainak frissítése
-			for (int i = 0; i < data.size(); i++) {
-				if (Long.decode(txtId.getText()).equals((data.get(i)).getId())) {
-					// A GUI-ban megadott ID meg lett találva
-					try {
-						// Adatok frissítése
-						dao.updateCV(new CV(Long.decode(txtId.getText()), txtName.getText(), txtPlaceOfBirth.getText(),
-								Date.valueOf(dtpDateOfBirth.getValue()), txtNationality.getText(), txtEmail.getText(),
-								txtPhone.getText(), new Date(Calendar.getInstance().getTime().getTime())));
+			if (data != null) {
+				// A GUI-ban megadott ID megkeresése, majd annak adatainak frissítése
+				for (int i = 0; i < data.size(); i++) {
+					if (Long.decode(txtId.getText()).equals((data.get(i)).getId())) {
+						// A GUI-ban megadott ID meg lett találva
+						try {
+							// Adatok frissítése
+							dao.updateCV(new CV(Long.decode(txtId.getText()), txtName.getText(),
+									txtPlaceOfBirth.getText(), Date.valueOf(dtpDateOfBirth.getValue()),
+									txtNationality.getText(), txtEmail.getText(), txtPhone.getText(),
+									new Date(Calendar.getInstance().getTime().getTime())));
 
-					} catch (Exception e) {
-						// Hibaüzenet létrehozása
-						Alert alert = Util.createAlert("HIBA", "Frissítési hiba",
-								"Hiba történt az adatok frissítése során!");
-						alert.show();
-						e.printStackTrace();
+						} catch (Exception e) {
+							// Hibaüzenet létrehozása
+							Alert alert = Util.createAlert("HIBA", "Frissítési hiba",
+									"Hiba történt az adatok frissítése során!");
+							alert.show();
+							e.printStackTrace();
+						}
 					}
 				}
 			}
@@ -225,16 +243,23 @@ public class CVController implements Initializable {
 			alert.show();
 			// Amennyiben ki van jelölve egy sor
 		} else {
-			try {
-				// Törlés
-				dao.deleteCV(selectedCV);
-				// Törlés lokálisan
-				tableCV.getItems().remove(selectedCV);
-			} catch (Exception e) {
-				// Hibaüzenet létrehozása
-				Alert alert = Util.createAlert("Hiba", "Törlési hiba!");
-				alert.show();
-				e.printStackTrace();
+			Alert alertConfirm = Util.createAlert(AlertType.CONFIRMATION, "TÖRLÉS MEGERŐSÍTÉSE", "",
+					"Biztos hogy szeretnéd törölni a kijelölt adatot?");
+
+			Optional<ButtonType> alertResult = alertConfirm.showAndWait();
+
+			if (alertResult.get() == ButtonType.OK) {
+				try {
+					// Törlés
+					dao.deleteCV(selectedCV);
+					// Törlés lokálisan
+					tableCV.getItems().remove(selectedCV);
+				} catch (Exception e) {
+					// Hibaüzenet létrehozása
+					Alert alert = Util.createAlert("Hiba", "Törlési hiba!");
+					alert.show();
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -286,8 +311,107 @@ public class CVController implements Initializable {
 				((Stage) ((Node) event.getSource()).getScene().getWindow()).hide();
 
 			} catch (Exception e) {
+				Alert alert = Util.createAlert("HIBA", "Hiba keletkezett az ablak betöltése közben!");
+				alert.show();
 				e.printStackTrace();
 			}
+		} else {
+			Alert alert = Util.createAlert("HIBA", "Kiválasztási hiba", "Válasszon egy sort!");
+			alert.show();
+		}
+	}
+
+	@FXML
+	private void doSaveToPDF(ActionEvent event) {
+		// A jelenleg kijelölt sorhoz tartozó CV megállapítása
+		CV selectedCV = tableCV.getSelectionModel().getSelectedItem();
+		ArrayList<Education> dataEducations = null;
+		ArrayList<Job> dataJobs = null;
+
+		if (selectedCV != null) {
+			try {
+				dataEducations = dao.getEducations(selectedCV.getId());
+				dataJobs = dao.getJobs(selectedCV.getId());
+			} catch (Exception e) {
+				// Hibaüzenet létrehozása
+				Alert alert = Util.createAlert("HIBA", "Adatbeolvasási hiba",
+						"Hiba történt az adatok beolvasása során!");
+				alert.show();
+				e.printStackTrace();
+			}
+
+			if (dataEducations != null || dataJobs != null) {
+				Document document = new Document();
+
+				try {
+					PdfWriter.getInstance(document, new FileOutputStream(
+							selectedCV.getName().toLowerCase().replaceAll(" ", "").trim() + "CV.pdf"));
+				} catch (Exception e) {
+					Alert alert = Util.createAlert("HIBA", "Hiba a PDF betöltése/létrehozása közben!");
+					alert.show();
+					e.printStackTrace();
+				}
+
+				document.open();
+				document.setPageSize(PageSize.A4);
+
+				try {
+					Util.writeTextToPDF(document, selectedCV.getName(), 20);
+					Util.writeTextToPDF(document, selectedCV.getEmail(), 8);
+					Util.writeTextToPDF(document, selectedCV.getPhone(), 8);
+					Util.writeTextToPDF(document, "Állampolgárság: " + selectedCV.getNationality(), 8);
+					Util.writeTextToPDF(document, "Születési hely: " + selectedCV.getPlaceOfBirth(), 8);
+					Util.writeTextToPDF(document, "Születési idő: " + selectedCV.getDateOfBirth().toString(), 8);
+					Util.writeTextToPDF(document, "Létrehozva: " + selectedCV.getDateOfCreation().toString(), 8);
+
+					if (dataEducations.size() > 0) {
+						Util.writeTextToPDF(document, " ");
+						Util.writeTextToPDF(document, " ");
+						Util.writeTextToPDF(document, " ");
+						Util.writeTextToPDF(document, "Tanulmányok:");
+
+						for (int i = 0; i < dataEducations.size(); i++) {
+							Util.writeTextToPDF(document, dataEducations.get(i).getName(), 8);
+							Util.writeTextToPDF(document, dataEducations.get(i).getBeginning().toString() + " - "
+									+ dataEducations.get(i).getEnding(), 8);
+							Util.writeTextToPDF(document, dataEducations.get(i).getAchievement(), 8);
+							Util.writeTextToPDF(document, " ");
+						}
+
+					}
+
+					if (dataEducations.size() > 0) {
+						Util.writeTextToPDF(document, " ");
+						Util.writeTextToPDF(document, " ");
+						Util.writeTextToPDF(document, " ");
+						Util.writeTextToPDF(document, "Munkák:");
+
+						for (int i = 0; i < dataJobs.size(); i++) {
+							Util.writeTextToPDF(document, dataJobs.get(i).getName(), 8);
+							Util.writeTextToPDF(document,
+									dataJobs.get(i).getBeginning().toString() + " - " + dataJobs.get(i).getEnding(), 8);
+							Util.writeTextToPDF(document, dataJobs.get(i).getPosition(), 8);
+							Util.writeTextToPDF(document, dataJobs.get(i).getResponsibilities(), 8);
+							Util.writeTextToPDF(document, " ");
+						}
+					}
+
+				} catch (Exception e) {
+					Alert alert = Util.createAlert("HIBA", "Hiba keletkezett a PDF fájlba írás közben!");
+					alert.show();
+					e.printStackTrace();
+				}
+
+				if (document.isOpen()) {
+					Alert alert = Util.createAlert(AlertType.INFORMATION, "SIKERES MENTÉS", "",
+							"Az adatok sikeresen le lettek mentve egy PDF fájlba!");
+					alert.show();
+				}
+
+				document.close();
+
+			}
+
 		} else {
 			Alert alert = Util.createAlert("HIBA", "Kiválasztási hiba", "Válasszon egy sort!");
 			alert.show();
@@ -310,7 +434,8 @@ public class CVController implements Initializable {
 			txtEmail.setText(selectedCV.getEmail());
 			txtPhone.setText(selectedCV.getPhone());
 
-			// Duplán kattintva valamelyik önéletrajra ugyanazt hajtja végre mintha a "Csatolt adatok" gombra kattintottunk volna
+			// Duplán kattintva valamelyik önéletrajra ugyanazt hajtja végre mintha a
+			// "Csatolt adatok" gombra kattintottunk volna
 			if (event.getButton().equals(MouseButton.PRIMARY)) {
 				if (event.getClickCount() == 2) {
 					try {
@@ -353,6 +478,8 @@ public class CVController implements Initializable {
 						((Stage) ((Node) event.getSource()).getScene().getWindow()).hide();
 
 					} catch (Exception e) {
+						Alert alert = Util.createAlert("HIBA", "Hiba keletkezett az ablak betöltése közben!");
+						alert.show();
 						e.printStackTrace();
 					}
 

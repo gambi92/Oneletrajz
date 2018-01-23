@@ -180,22 +180,25 @@ public class ExperienceController implements Initializable {
 				e.printStackTrace();
 			}
 
-			// A GUI-ban megadott ID megkeresése, majd annak adatainak frissítése
-			for (int i = 0; i < data.size(); i++) {
-				if (Long.decode(txtIdEducation.getText()).equals(data.get(i).getId())) {
-					// A GUI-ban megadott ID meg lett találva
-					try {
-						// Adatok frissítése
-						dao.updateEducation(new Education(Long.decode(txtIdEducation.getText()),
-								txtNameEducation.getText(), Date.valueOf(dtpBeginningEducation.getValue()),
-								Date.valueOf(dtpEndingEducation.getValue()), CvId, txtAchievementEducation.getText()));
+			if (data != null) {
+				// A GUI-ban megadott ID megkeresése, majd annak adatainak frissítése
+				for (int i = 0; i < data.size(); i++) {
+					if (Long.decode(txtIdEducation.getText()).equals(data.get(i).getId())) {
+						// A GUI-ban megadott ID meg lett találva
+						try {
+							// Adatok frissítése
+							dao.updateEducation(new Education(Long.decode(txtIdEducation.getText()),
+									txtNameEducation.getText(), Date.valueOf(dtpBeginningEducation.getValue()),
+									Date.valueOf(dtpEndingEducation.getValue()), CvId,
+									txtAchievementEducation.getText()));
 
-					} catch (Exception e) {
-						// Hibaüzenet létrehozása
-						Alert alert = Util.createAlert("HIBA", "Frissítési hiba",
-								"Hiba történt az adatok frissítése során!");
-						alert.show();
-						e.printStackTrace();
+						} catch (Exception e) {
+							// Hibaüzenet létrehozása
+							Alert alert = Util.createAlert("HIBA", "Frissítési hiba",
+									"Hiba történt az adatok frissítése során!");
+							alert.show();
+							e.printStackTrace();
+						}
 					}
 				}
 			}
@@ -268,22 +271,24 @@ public class ExperienceController implements Initializable {
 				e.printStackTrace();
 			}
 
-			// A GUI-ban megadott ID megkeresése, majd annak adatainak frissítése
-			for (int i = 0; i < data.size(); i++) {
-				if (Long.decode(txtIdJob.getText()).equals((data.get(i)).getId())) {
-					// A GUI-ban megadott ID meg lett találva
-					try {
-						// Adatok frissítése
-						dao.updateJob(new Job(Long.decode(txtIdJob.getText()), txtNameJob.getText(),
-								Date.valueOf(dtpBeginningJob.getValue()), Date.valueOf(dtpEndingJob.getValue()), CvId,
-								txtPositionJob.getText(), txtResponsibilitiesJob.getText()));
+			if (data != null) {
+				// A GUI-ban megadott ID megkeresése, majd annak adatainak frissítése
+				for (int i = 0; i < data.size(); i++) {
+					if (Long.decode(txtIdJob.getText()).equals((data.get(i)).getId())) {
+						// A GUI-ban megadott ID meg lett találva
+						try {
+							// Adatok frissítése
+							dao.updateJob(new Job(Long.decode(txtIdJob.getText()), txtNameJob.getText(),
+									Date.valueOf(dtpBeginningJob.getValue()), Date.valueOf(dtpEndingJob.getValue()),
+									CvId, txtPositionJob.getText(), txtResponsibilitiesJob.getText()));
 
-					} catch (Exception e) {
-						// Hibaüzenet létrehozása
-						Alert alert = Util.createAlert("HIBA", "Frissítési hiba",
-								"Hiba történt az adatok frissítése során!");
-						alert.show();
-						e.printStackTrace();
+						} catch (Exception e) {
+							// Hibaüzenet létrehozása
+							Alert alert = Util.createAlert("HIBA", "Frissítési hiba",
+									"Hiba történt az adatok frissítése során!");
+							alert.show();
+							e.printStackTrace();
+						}
 					}
 				}
 			}
