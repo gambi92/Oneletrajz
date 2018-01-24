@@ -397,7 +397,7 @@ public class CVController implements Initializable {
 					}
 
 				} catch (Exception e) {
-					Alert alert = Util.createAlert("HIBA", "Hiba keletkezett a PDF fájlba írás közben!");
+					Alert alert = Util.createAlert("HIBA", "Hiba keletkezett a PDF fájlba írása közben!");
 					alert.show();
 					e.printStackTrace();
 				}

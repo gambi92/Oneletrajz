@@ -3,6 +3,7 @@ package hu.gambino.ctrl;
 import java.net.URL;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import hu.gambino.Start;
@@ -15,10 +16,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 
@@ -240,16 +243,23 @@ public class ExperienceController implements Initializable {
 			alert.show();
 			// Amennyiben ki van jelölve egy sor
 		} else {
-			try {
-				// Törlés
-				dao.deleteEducation(selectedEducation);
-				// Törlés lokálisan
-				tableEducation.getItems().remove(selectedEducation);
-			} catch (Exception e) {
-				// Hibaüzenet létrehozása
-				Alert alert = Util.createAlert("Hiba", "Törlési hiba!");
-				alert.show();
-				e.printStackTrace();
+			Alert alertConfirm = Util.createAlert(AlertType.CONFIRMATION, "TÖRLÉS MEGERŐSÍTÉSE", "",
+					"Biztos hogy szeretnéd törölni a kijelölt adatot?");
+
+			Optional<ButtonType> alertResult = alertConfirm.showAndWait();
+
+			if (alertResult.get() == ButtonType.OK) {
+				try {
+					// Törlés
+					dao.deleteEducation(selectedEducation);
+					// Törlés lokálisan
+					tableEducation.getItems().remove(selectedEducation);
+				} catch (Exception e) {
+					// Hibaüzenet létrehozása
+					Alert alert = Util.createAlert("Hiba", "Törlési hiba!");
+					alert.show();
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -330,16 +340,23 @@ public class ExperienceController implements Initializable {
 			alert.show();
 			// Amennyiben ki van jelölve egy sor
 		} else {
-			try {
-				// Törlés
-				dao.deleteJob(selectedJob);
-				// Törlés lokálisan
-				tableJob.getItems().remove(selectedJob);
-			} catch (Exception e) {
-				// Hibaüzenet létrehozása
-				Alert alert = Util.createAlert("Hiba", "Törlési hiba!");
-				alert.show();
-				e.printStackTrace();
+			Alert alertConfirm = Util.createAlert(AlertType.CONFIRMATION, "TÖRLÉS MEGERŐSÍTÉSE", "",
+					"Biztos hogy szeretnéd törölni a kijelölt adatot?");
+
+			Optional<ButtonType> alertResult = alertConfirm.showAndWait();
+
+			if (alertResult.get() == ButtonType.OK) {
+				try {
+					// Törlés
+					dao.deleteJob(selectedJob);
+					// Törlés lokálisan
+					tableJob.getItems().remove(selectedJob);
+				} catch (Exception e) {
+					// Hibaüzenet létrehozása
+					Alert alert = Util.createAlert("Hiba", "Törlési hiba!");
+					alert.show();
+					e.printStackTrace();
+				}
 			}
 		}
 	}
